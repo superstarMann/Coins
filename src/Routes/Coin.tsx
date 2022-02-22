@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useLocation, useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { Link, Outlet, Route, Routes, useLocation, useMatch, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Container, Header, Loader } from './Coins';
+import { fetchCoinInfo, fetchCoinTickers } from '../api';
+import { PriceData } from '../interface';
+import { Chart } from './Chart';
+import { Header, Loader} from '../Components/CoinsList';
+import { Price } from './Price';
 
-interface InfoData {
+export interface InfoData {
     id: string;
     name: string;
     symbol: string;
@@ -24,39 +29,6 @@ interface InfoData {
     first_data_at: string;
     last_data_at: string;
   }
-interface PriceData {
-    id: string;
-    name: string;
-    symbol: string;
-    rank: number;
-    circulating_supply: number;
-    total_supply: number;
-    max_supply: number;
-    beta_value: number;
-    first_data_at: string;
-    last_updated: string;
-    quotes: {
-      USD: {
-        ath_date: string;
-        ath_price: number;
-        market_cap: number;
-        market_cap_change_24h: number;
-        percent_change_1h: number;
-        percent_change_1y: number;
-        percent_change_6h: number;
-        percent_change_7d: number;
-        percent_change_12h: number;
-        percent_change_15m: number;
-        percent_change_24h: number;
-        percent_change_30d: number;
-        percent_change_30m: number;
-        percent_from_price_ath: number;
-        price: number;
-        volume_24h: number;
-        volume_24h_change_24h: number;
-      };
-    };
-  }
 
 interface RouteParams {
     coinId: string;
@@ -70,15 +42,19 @@ interface RouteState{
     state: nameState;
 }
 
+const Wohnung = styled.div`
+width: 30%;
+margin-top: 10px;
+`
+
 const OverView = styled.div`
-  width: 30%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 15px 20px;
   border-radius: 10px;
-  margin-top: 30px;
+  margin-top: 6px;
 `
 const OverviewItem = styled.div`
   width: 100%;
@@ -92,15 +68,49 @@ const Inhalt = styled.span`
 margin-top: 6px;
 color: #f1c40f;
 `
+
+const CoinInfo = styled.div`
+background-color: rgba(0, 0, 0, 0.5);
+margin-top: 6px;
+line-height: 2em;
+color: white;
+border-radius: 15px;
+padding: 20px;
+div{
+    color: #74b9ff;
+}
+`
+
+const Box = styled.div`
+margin-top: 2px;
+display: flex;
+flex-direction: column;
+`
+
+const SLink = styled.span<{isActive: boolean}>`
+margin-top: 6px;
+width: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+text-align: left;
+font-size: 1rem;
+padding: 13px 20px;
+border-radius: 10px;
+`
     
 export const Coin = () => {
-    const [info, setInfo] = useState<InfoData>()
-    const [priceInfo, setPriceInfo] = useState<PriceData>()
-    const [loading, setLoading] = useState(true)
     const params = useParams() as unknown as RouteParams;
     const coinId = params.coinId;
+    const priceMatch = useMatch('/:coinId/price');
+    const chartMatch = useMatch('/:coinId/chart')
+    const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId))
+    const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId), {
+        refetchInterval: 100000
+    })
+    const loading = infoLoading || tickersLoading;
+    /*const [info, setInfo] = useState<InfoData>()
+    const [priceInfo, setPriceInfo] = useState<PriceData>()
+    const [loading, setLoading] = useState(true)
     const {state: {name}} = useLocation() as unknown as RouteState;
-
     useEffect(() => {
         (async () => {
             const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json()
@@ -109,34 +119,59 @@ export const Coin = () => {
             setPriceInfo(priceData)
             setLoading(false);
         })()
-    }, [coinId])
+    }, [coinId])*/
     return(
-        <Container>
-            <Helmet><title>{name} | Loading...</title></Helmet>
+        <>
+            <Helmet><title>{loading ? `${infoData?.name} | Loading...` : `${infoData?.name} | Coin`}</title></Helmet>
             <Header>
-                {name}
+                {infoData?.name}
             </Header>
             {loading ? (
                 <Loader>Loading....</Loader>
             ) : (
-                <>
+                <Wohnung>
                 <OverView>
                     <OverviewItem>
                     <span>Rank</span> 
-                    <Inhalt>{info?.rank}</Inhalt>
+                    <Inhalt>{infoData?.rank}</Inhalt>
                     </OverviewItem>
                     <OverviewItem>
                     <span>Symbol</span>
-                    <Inhalt>${info?.symbol}</Inhalt>
+                    <Inhalt>${infoData?.symbol}</Inhalt>
                     </OverviewItem>
                     <OverviewItem>
-                    <span>Open Source</span>
-                    <Inhalt>{info?.open_source ? "true" : "false"}</Inhalt>
+                    <span>Price</span>
+                    <Inhalt>${tickersData?.quotes.USD.price}</Inhalt>
                     </OverviewItem>
                 </OverView>
-                {info?.description}
-                </>
+                <CoinInfo>
+                <div>Description</div>
+                {infoData?.description}
+                </CoinInfo>
+                <OverView>
+                <OverviewItem>
+                    <span>Total Suply</span> 
+                    <Inhalt>{tickersData?.total_supply}</Inhalt>
+                    </OverviewItem>
+                    <OverviewItem>
+                    {""}
+                    </OverviewItem>
+                    <OverviewItem>
+                    <span>Max supply</span>
+                    <Inhalt>{tickersData?.max_supply}</Inhalt>
+                    </OverviewItem>
+                </OverView>
+                <Box>
+                    <SLink isActive={priceMatch !== null}>
+                        <Price/>
+                    </SLink>
+                    <SLink isActive={chartMatch !== null}>
+                        <Chart coinId={coinId}/>
+                    </SLink>
+                <Outlet/>
+                </Box>
+                </Wohnung>
             )}
-        </Container>
+        </>
     )
 }

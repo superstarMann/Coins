@@ -56,7 +56,7 @@ table {
 }
 body {
   font-family: 'Source Sans Pro', sans-serif;
-  background-color:#2f3640;
+  background-color:#ffffff;
   color:#74b9ff;
 }
 a {
