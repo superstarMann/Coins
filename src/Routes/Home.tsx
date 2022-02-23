@@ -65,7 +65,7 @@ export const Home = () => {
             <div>24h Volume</div>
             <div>Markey Cap</div>
             </Title>
-            {isLoading ? <Loader actionText='Loading...'/> : (
+            {isLoading ?  <Loader actionText='Loading...'/> : (
                 <>
                 {data?.slice(20 * (page - 1), 20 * page).map((coin) => (
                     <CoinsList 
