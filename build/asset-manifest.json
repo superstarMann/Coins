@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.js": "/coins.github.io/static/js/main.e531dd05.js",
+    "main.js": "/coins.github.io/static/js/main.ae797aed.js",
     "static/js/787.da2927c7.chunk.js": "/coins.github.io/static/js/787.da2927c7.chunk.js",
     "index.html": "/coins.github.io/index.html",
-    "main.e531dd05.js.map": "/coins.github.io/static/js/main.e531dd05.js.map",
+    "main.ae797aed.js.map": "/coins.github.io/static/js/main.ae797aed.js.map",
     "787.da2927c7.chunk.js.map": "/coins.github.io/static/js/787.da2927c7.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.e531dd05.js"
+    "static/js/main.ae797aed.js"
   ]
 }
