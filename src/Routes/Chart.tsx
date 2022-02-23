@@ -2,7 +2,18 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { fetchCoinHistory } from '../api';
 import ApexChart from 'react-apexcharts'
-import { Loader } from '../Components/CoinsList';
+import { Loader } from '../Components/Loader';
+import styled from 'styled-components';
+import { MiniTitle } from '../Components/CoinInfo';
+
+const Container = styled.div`
+padding-top: 3rem;
+width: 80%;
+`
+
+const ChartImg = styled.div`
+padding-top: 2rem;
+`
 
 interface IParams {
    coinId?: string | any;
@@ -23,59 +34,50 @@ export const Chart = ({coinId}: IParams) => {
         refetchInterval: 100000
     });
     return(
-    <div>
-        <div>Chart</div>
-        {isLoading ? (<Loader>Loading...</Loader>) : (
+    <Container>
+        <MiniTitle><span>Chart</span></MiniTitle>
+        {isLoading ? (<Loader actionText='Loading...'/>) : (
+            <ChartImg>
             <ApexChart
-            type="line"
-            series={[
-                {
-                name: "price",
-                data: data?.map(coin => coin.low)
-            }
-            ]}
+            type="candlestick"
             options={{
-                theme: {
-                    mode: "light"
+                chart:{
+                    type:"candlestick",
+                    toolbar: {show: false}
                 },
-                grid: {
-                    show: false
-                },
-                yaxis: {
-                    show: false
+                tooltip:{
+                    enabled: true
                 },
                 xaxis:{
-                    labels:{
-                        show: false
-                    },
-                    axisTicks:{
-                        show:false
-                    },
-                    axisBorder: {
-                        show: false                        
-                    },
                     type: "datetime",
-                    categories: data?.map((price) => price.time_close),
+                    labels: {format: "MM/dd"}
                 },
-                stroke: {
-                    curve: "smooth",
-                    width: 4,
-                  },
-                chart: {
-                    width: 700,
-                    height: 500,
-                    toolbar: {
-                        show: false
-                    },
-                    background: "transparent"
-                },tooltip: {
-                    y: {
-                      formatter: (value) => `$${value.toFixed(2)}`,
-                    },
-                  },
+                yaxis:{
+                    tooltip: {enabled: true},
+                    labels:{
+                        formatter: (money) => money.toLocaleString("KR")
+                    }
+                },
+                plotOptions:{
+                    candlestick:{
+                        colors:{
+                            upward: "#ff0000",
+                            downward: "#0000ff"
+                        }
+                    }
+                }
             }}
+            series={[
+                {
+                    data: data?.map(coin => ({
+                        x: coin.time_open,
+                        y: [coin.open, coin.high, coin.low, coin.close]
+                    }))
+                }
+            ]}
             />
+        </ChartImg>
         )}
-    </div>
+    </Container>
     )
 }

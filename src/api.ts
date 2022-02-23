@@ -17,7 +17,7 @@ export const fetchCoinTickers = async (coinId: any) => {
 
 export const fetchCoinHistory = async(coinId: string) => {
     const endDate = Math.floor(Date.now() / 1000);
-    const startDate = endDate - 60 *60 *24 *30;
+    const startDate = endDate - 60 *60 * 24 * 7 * 2;
     const historyfetch = await(await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}/ohlcv/historical?start=${startDate}&end=${endDate}`)).json();
     return historyfetch;
 }

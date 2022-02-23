@@ -2,18 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const Loader = styled.div`
-color: #f1c40f;
-margin-top: 50px;
-font-size: 2rem;
-`
-
 export const Header = styled.header`
 font-size: 3.5em;
 padding-top: 20px;
 `
 
 const CoinUl = styled.ul`
+font-weight: bold;
 `
 
 const CoinLi = styled.li`
@@ -45,6 +40,11 @@ span:first-child {
   width: 30%;
   display: flex;
   align-items: center;
+  div{
+    padding-left: 15px;
+    opacity: 0.3;
+    font-size: 0.8em;
+  }
 }
 span:nth-child(n + 2) {
     width: 17.5%;
@@ -78,7 +78,9 @@ export const CoinsList:React.FC<IProps> = ({id, percent_change_24h, price, volum
         <CoinLi key={id}>
             <Slink to={`/${id}`} state={{name: name}}>
             <span><img src={`https://cryptoicon-api.vercel.app/api/icon/${symbol.toLowerCase()}`}/>
-                {name}</span>
+                {symbol}
+                <div>{name}</div>
+                </span>
                 <span>${price}</span>
                 <span>{percent_change_24h >= 0  ?  
                 <div style={{color: "red"}}>+{percent_change_24h}%</div> : 

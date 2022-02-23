@@ -6,6 +6,7 @@ display: flex;
 justify-content: center;
 padding-top:7rem;
 font-size: 2.2rem;
+font-weight: bold;
 `
 
 interface IProps{

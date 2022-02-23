@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
-import { Link, Outlet, Route, Routes, useLocation, useMatch, useParams } from 'react-router-dom';
+import { useMatch, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchCoinInfo, fetchCoinTickers } from '../api';
 import { PriceData } from '../interface';
 import { Chart } from './Chart';
-import { Header, Loader} from '../Components/CoinsList';
-import { Price } from './Price';
+import { TitleName } from '../Components/TitleName';
+import { Container } from './Home';
+import { CoinDetail } from '../Components/CoinDetail';
+import { CoinInfo } from '../Components/CoinInfo';
+import { Loader } from '../Components/Loader';
 
 export interface InfoData {
     id: string;
@@ -34,67 +37,15 @@ interface RouteParams {
     coinId: string;
 }
 
-interface nameState{
-    name: string;
-}
-    
-interface RouteState{
-    state: nameState;
-}
-
-const Wohnung = styled.div`
-width: 30%;
-margin-top: 10px;
-`
-
-const OverView = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 15px 20px;
-  border-radius: 10px;
-  margin-top: 6px;
-`
-const OverviewItem = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Inhalt = styled.span`
-margin-top: 6px;
-color: #f1c40f;
-`
-
-const CoinInfo = styled.div`
-background-color: rgba(0, 0, 0, 0.5);
-margin-top: 6px;
-line-height: 2em;
-color: white;
-border-radius: 15px;
-padding: 20px;
-div{
-    color: #74b9ff;
-}
-`
 
 const Box = styled.div`
-margin-top: 2px;
+gap:2rem;
+width: 100%;
 display: flex;
-flex-direction: column;
 `
 
 const SLink = styled.span<{isActive: boolean}>`
-margin-top: 6px;
-width: 100%;
-background-color: rgba(0, 0, 0, 0.5);
-text-align: left;
-font-size: 1rem;
-padding: 13px 20px;
-border-radius: 10px;
+width: 50%;
 `
     
 export const Coin = () => {
@@ -122,56 +73,33 @@ export const Coin = () => {
     }, [coinId])*/
     return(
         <>
+        <TitleName name={infoData?.name}/>
             <Helmet><title>{loading ? `${infoData?.name} | Loading...` : `${infoData?.name} | Coin`}</title></Helmet>
-            <Header>
-                {infoData?.name}
-            </Header>
+            <Container>
             {loading ? (
-                <Loader>Loading....</Loader>
+                <Loader actionText='Loading...'/>
             ) : (
-                <Wohnung>
-                <OverView>
-                    <OverviewItem>
-                    <span>Rank</span> 
-                    <Inhalt>{infoData?.rank}</Inhalt>
-                    </OverviewItem>
-                    <OverviewItem>
-                    <span>Symbol</span>
-                    <Inhalt>${infoData?.symbol}</Inhalt>
-                    </OverviewItem>
-                    <OverviewItem>
-                    <span>Price</span>
-                    <Inhalt>${tickersData?.quotes.USD.price}</Inhalt>
-                    </OverviewItem>
-                </OverView>
-                <CoinInfo>
-                <div>Description</div>
-                {infoData?.description}
-                </CoinInfo>
-                <OverView>
-                <OverviewItem>
-                    <span>Total Suply</span> 
-                    <Inhalt>{tickersData?.total_supply}</Inhalt>
-                    </OverviewItem>
-                    <OverviewItem>
-                    {""}
-                    </OverviewItem>
-                    <OverviewItem>
-                    <span>Max supply</span>
-                    <Inhalt>{tickersData?.max_supply}</Inhalt>
-                    </OverviewItem>
-                </OverView>
+                <>
+                    <CoinDetail 
+                    percent_change_24h={tickersData?.quotes.USD.percent_change_24h}
+                    ath_price={tickersData?.quotes.USD.ath_price}
+                    symbol={infoData?.symbol} 
+                    price={tickersData?.quotes.USD.price}/>
                 <Box>
-                    <SLink isActive={priceMatch !== null}>
-                        <Price/>
-                    </SLink>
                     <SLink isActive={chartMatch !== null}>
                         <Chart coinId={coinId}/>
                     </SLink>
-                <Outlet/>
+                    <CoinInfo 
+                    max_supply={tickersData?.max_supply}
+                    total_supply={tickersData?.total_supply}
+                    circulating_supply={tickersData?.circulating_supply}
+                    market_cap={tickersData?.quotes.USD.market_cap}
+                    rank={infoData?.rank}
+                    />
                 </Box>
-                </Wohnung>
+                </>
             )}
+            </Container>
         </>
     )
 }
