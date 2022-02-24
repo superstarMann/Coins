@@ -1,3 +1,4 @@
+import axios from "axios";
 
 export const fetchCoins = async () => {
     const response = await fetch("https://api.coinpaprika.com/v1/tickers")
