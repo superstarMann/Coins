@@ -7,7 +7,7 @@ import { fetchCoinInfo, fetchCoinTickers } from '../api';
 import { PriceData } from '../interface';
 import { Chart } from './Chart';
 import { TitleName } from '../Components/TitleName';
-import { Container } from './Home';
+import { Container, MM } from './Home';
 import { CoinDetail } from '../Components/CoinDetail';
 import { CoinInfo } from '../Components/CoinInfo';
 import { Loader } from '../Components/Loader';
@@ -76,6 +76,7 @@ export const Coin = () => {
         <TitleName name={infoData?.name}/>
             <Helmet><title>{loading ? `${infoData?.name} | Loading...` : `${infoData?.name} | Coin`}</title></Helmet>
             <Container>
+                <MM>
             {loading ? (
                 <Loader actionText='Loading...'/>
             ) : (
@@ -99,6 +100,7 @@ export const Coin = () => {
                 </Box>
                 </>
             )}
+            </MM>
             </Container>
         </>
     )

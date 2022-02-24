@@ -15,6 +15,7 @@ gap: 3rem;
 const Contents = styled.div`
 font-size: 1.6rem;
 display: flex;
+color: ${props => props.theme.textColor};
 div{
     width: 50%;
     font-weight: bold;

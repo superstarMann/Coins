@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { DIV } from '../Routes/Home';
 
 export const Header = styled.header`
 font-size: 3.5em;
@@ -9,6 +10,7 @@ padding-top: 20px;
 
 const CoinUl = styled.ul`
 font-weight: bold;
+background-color: ${props => props.theme.bgColors};
 `
 
 const CoinLi = styled.li`
@@ -27,7 +29,7 @@ const Slink = styled(Link)`
 border-bottom: 1px solid black;
 display: flex;
 span {
-    color: black;
+    color: ${props => props.theme.textColor};
     font-size: 1.3rem;
     text-align: left;
     img{
@@ -74,6 +76,7 @@ export const CoinsList:React.FC<IProps> = ({id, percent_change_24h, price, volum
         })();
     }, [])*/
     return(
+    <DIV>
       <CoinUl>
         <CoinLi key={id}>
             <Slink to={`/${id}`} state={{name: name}}>
@@ -81,15 +84,16 @@ export const CoinsList:React.FC<IProps> = ({id, percent_change_24h, price, volum
                 {symbol}
                 <div>{name}</div>
                 </span>
-                <span>${price}</span>
+                <span>${price.toLocaleString("KR")}</span>
                 <span>{percent_change_24h >= 0  ?  
                 <div style={{color: "red"}}>+{percent_change_24h}%</div> : 
                 <div style={{color: "blue"}}>{percent_change_24h}%</div>}
                 </span>
-                <span>{volume_24h}</span>
-                <span>{market_cap}</span>
+                <span>{volume_24h.toLocaleString("KR")}</span>
+                <span>{market_cap.toLocaleString("KR")}</span>
             </Slink>
         </CoinLi>
       </CoinUl>
+      </DIV>
     )
 }

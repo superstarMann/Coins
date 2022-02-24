@@ -5,6 +5,8 @@ import ApexChart from 'react-apexcharts'
 import { Loader } from '../Components/Loader';
 import styled from 'styled-components';
 import { MiniTitle } from '../Components/CoinInfo';
+import { useRecoilValue } from 'recoil';
+import { isDarkAtom } from '../atmos';
 
 const Container = styled.div`
 padding-top: 3rem;
@@ -30,6 +32,7 @@ interface IHistorical {
   }
 
 export const Chart = ({coinId}: IParams) => {
+    const isDark = useRecoilValue(isDarkAtom);
     const {isLoading, data} = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId), {
         refetchInterval: 100000
     });
@@ -41,6 +44,9 @@ export const Chart = ({coinId}: IParams) => {
             <ApexChart
             type="candlestick"
             options={{
+                theme:{
+                    mode: isDark ? "dark" : "light",
+                },
                 chart:{
                     type:"candlestick",
                     toolbar: {show: false}
